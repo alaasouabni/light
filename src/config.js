@@ -1,4 +1,4 @@
-const CONTRACT_NAME = process.env.CONTRACT_NAME ||'light'
+const CONTRACT_NAME = process.env.CONTRACT_NAME ||'token-access'
 
 function getConfig(env) {
   switch (env) {
