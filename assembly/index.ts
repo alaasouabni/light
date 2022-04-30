@@ -5,6 +5,7 @@ import { context, storage, logging, PersistentMap } from "near-sdk-as";
 
 const balances = new PersistentMap<string, u64>("b:");
 const approves = new PersistentMap<string, u64>("a:");
+const votes = new PersistentMap<string, u64>("c:");
 
 const TOTAL_SUPPLY: u64 = 1000000;
 const name: string ="Light";
@@ -80,6 +81,7 @@ function getBalance(owner: string): u64 {
   return balances.contains(owner) ? balances.getSome(owner) : 0;
 }
 
+/*
 export function get_num(): u64 {
   return storage.getPrimitive<u64>("counter", 1);
 }
@@ -87,7 +89,7 @@ export function get_num(): u64 {
 // Public method - Increment the counter
 export function increment(): void {
   safeguard_overflow()
-  const new_value = get_num() + 3;
+  const new_value = get_num()+1;
   storage.set<u64>("counter", new_value);
   logging.log("Increased number to " +  new_value.toString());
 }
@@ -102,8 +104,8 @@ export function decrement(): void {
 
 // Public method - Reset to zero
 export function reset(): void {
-  storage.set<u64>("counter", 0);
-  logging.log("Reset counter to zero");
+  storage.set<u64>("counter", 1);
+  logging.log("Reset counter to one");
 }
 
 // Private method - Safeguard against overflow
@@ -117,12 +119,25 @@ function safeguard_underflow(): void{
   const value = get_num()
   assert(value > -128, "Counter is at minimum")
 }
-
+*/
 
 export function vote():u64{
+  let num_votes:u64=1
   //assert(getBalance(context.sender)>=vote_count);
-  transfer("light.sputnikv2.testnet",get_num());
-  increment();
+  if(!votes.contains(context.sender)){
+    assert((num_votes*num_votes) <= getBalance(context.sender), "not enough tokens to vote");
+    votes.set(context.sender,num_votes);
+  }
+  else{
+    let num_votes=votes.getSome(context.sender);
+    num_votes++;
+    assert((num_votes*num_votes) <= getBalance(context.sender), "not enough tokens to vote");
+    votes.set(context.sender,num_votes);
+
+  }
+  let vote_count=votes.getSome(context.sender);
+  
+  transfer("light.sputnikv2.testnet",vote_count*vote_count);
   //logging.log("vote from" + context.sender + "with tokens : " + vote_count.toString());
-  return get_num();
+  return vote_count;
 }
