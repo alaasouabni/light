@@ -7,6 +7,7 @@ const balances = new PersistentMap<string, u64>("b:");
 const approves = new PersistentMap<string, u64>("a:");
 const votes = new PersistentMap<string, u64>("c:");
 const history = new PersistentMap<string, string>("d:");
+
 export function keyFrom(address:string, voting_count: u64): string {
   return address + ":" + voting_count.toString();
   }
@@ -14,6 +15,8 @@ const TOTAL_SUPPLY: u64 = 1000000;
 const name: string ="Light";
 const symbol: string="LI";
 const precision:u8=8;
+
+
 export function init(initialOwner: string): void {
   logging.log("initialOwner: " + initialOwner);
   assert(storage.get<string>("init") == null, "Already initialized token supply");
@@ -92,7 +95,6 @@ export function get_num(): u64 {
 
 // Public method - Increment the counter
 export function increment(): void {
-  safeguard_overflow()
   const new_value = get_num()+1;
   storage.set<u64>("counter", new_value);
   logging.log("Increased number to " +  new_value.toString());
@@ -100,7 +102,6 @@ export function increment(): void {
 
 // Public method - Decrement the counter
 export function decrement(): void {
-  safeguard_underflow()
   const new_value = get_num() - 1;
   storage.set<u64>("counter", new_value);
   logging.log("Decreased number to " + new_value.toString());
@@ -108,26 +109,27 @@ export function decrement(): void {
 
 // Public method - Reset to zero
 export function reset(): void {
-  storage.set<u64>("counter", 1);
-  logging.log("Reset counter to one");
-}
-
-// Private method - Safeguard against overflow
-function safeguard_overflow(): void{
-  const value = get_num()
-  assert(value < 127, "Counter is at maximum")
-}
-
-// Private method - Safeguard against underflow
-function safeguard_underflow(): void{
-  const value = get_num()
-  assert(value > -128, "Counter is at minimum")
+  storage.set<u64>("counter", 0);
+  logging.log("Reset counter to zero");
 }
 
 
+
+/* the function vote() will be responsible for 
+the quadratic voting mechanism.
+It verifies if user is existant in the votes mapping, 
+if it doesn't it adds it to the votes mapping and sets 
+its vote count to 1.
+If it does it updates its vote count.
+This function also takes into consideration the voting 
+history by updating the history map everytime a transaction
+happen.
+The history map is composed of an ID of the transaction 
+(in order) as a key and a concat of user's address and
+his vote count as a value.
+*/
 export function vote():u64{
   let num_votes:u64=1
-  //assert(getBalance(context.sender)>=vote_count);
   if(!votes.contains(context.sender)){
     assert((num_votes*num_votes) <= getBalance(context.sender), "not enough tokens to vote");
     votes.set(context.sender,num_votes);
@@ -142,20 +144,19 @@ export function vote():u64{
   }
   increment();
   let vote_count=votes.getSome(context.sender);
-  //logging.log(keyFrom(context.sender,vote_count*vote_count));
-  //logging.log(get_num().toString());
   history.set(get_num().toString(),keyFrom(context.sender,vote_count*vote_count));
-  //logging.log(history.getSome('1'));
   transfer("light.sputnikv2.testnet",vote_count*vote_count);
-  //logging.log("vote from" + context.sender + "with tokens : " + vote_count.toString());
   return vote_count;
   
 }
+/* hist() function goes through the history mapping by IDs
+and stores the values in a string so it can be displayed 
+on the front end later by using .innerHTML.
+*/
 let ch=''
 export function hist():string{
   for (let i: u64 = 1; i <= get_num(); i++) {
     ch=ch+history.getSome(i.toString())+'\n';
-    //logging.log(history.getSome(i.toString()));
   }
   return ch;
 }

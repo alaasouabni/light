@@ -12,7 +12,6 @@ describe('Token', function() {
     near = await nearlib.connect(nearConfig);
     alice = nearConfig.contractName;
     contract = await near.loadContract(nearConfig.contractName, {
-      // NOTE: This configuration only needed while NEAR is still in development
       viewMethods: ['totalSupply', 'balanceOf', 'allowance'],
       changeMethods: ['init', 'transfer', 'approve', 'transferFrom'],
       sender: alice

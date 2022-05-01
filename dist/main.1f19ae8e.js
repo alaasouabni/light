@@ -20819,12 +20819,10 @@ document.querySelector('.sign-in .btn').addEventListener('click', function () {
   walletAccount.requestSignIn(nearConfig.contractName, 'NEAR token example');
 });
 document.querySelector('.sign-out .btn').addEventListener('click', function () {
-  walletAccount.signOut(); // TODO: Move redirect to .signOut() ^^^
-
+  walletAccount.signOut();
   window.location.replace(window.location.origin + window.location.pathname);
 });
 document.querySelector('.vote .btn').addEventListener('click', function () {
-  //walletAccount.requestSignIn(nearConfig.contractName, 'NEAR token example');
   contract.vote();
 });
 
@@ -20844,7 +20842,6 @@ function _write() {
 
           case 2:
             ch = _context2.sent;
-            //console.log(ch);
             document.getElementById('History').innerHTML = ch;
             return _context2.abrupt("return", ch);
 
@@ -20859,11 +20856,8 @@ function _write() {
 }
 
 document.querySelector('.history .btn').addEventListener('click', function () {
-  //walletAccount.requestSignIn(nearConfig.contractName, 'NEAR token example');
-  //console.log('test'+write());
   write();
-}); //document.getElementById('History').innerHTML = write();
-
+});
 window.nearInitPromise = connect().then(updateUI).catch(console.error);
 },{"regenerator-runtime/runtime":"../node_modules/regenerator-runtime/runtime.js","near-api-js":"../node_modules/near-api-js/lib/browser-index.js","./config":"config.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
@@ -20893,7 +20887,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "37941" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "46527" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
