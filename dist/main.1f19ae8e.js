@@ -20673,7 +20673,7 @@ __exportStar(require("./browser-connect"), exports);
 require("error-polyfill");
 
 },{"./key_stores/browser-index":"../node_modules/near-api-js/lib/key_stores/browser-index.js","./common-index":"../node_modules/near-api-js/lib/common-index.js","./browser-connect":"../node_modules/near-api-js/lib/browser-connect.js","error-polyfill":"../node_modules/error-polyfill/index.js"}],"config.js":[function(require,module,exports) {
-var CONTRACT_NAME = undefined || 'lightproject.testnet';
+var CONTRACT_NAME = undefined || 'lightcurr.testnet';
 /* TODO: fill this in! */
 
 function getConfig(env) {
@@ -20742,7 +20742,7 @@ module.exports = getConfig;
 },{}],"main.js":[function(require,module,exports) {
 "use strict";
 
-require("regenerator-runtime/runtime");
+var _runtime = require("regenerator-runtime/runtime");
 
 var nearAPI = _interopRequireWildcard(require("near-api-js"));
 
@@ -20758,7 +20758,6 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-var counter = 1;
 var nearConfig = (0, _config.default)("development" || "development"); // Connects to NEAR and provides `near`, `walletAccount` and `contract` objects in `window` scope
 
 function connect() {
@@ -20785,7 +20784,7 @@ function _connect() {
 
             _context.next = 6;
             return near.loadContract(nearConfig.contractName, {
-              viewMethods: ['totalSupply', 'tokenName', 'tokenSymbol', 'tokenPrecision', 'balanceOf', 'allowance'],
+              viewMethods: ['totalSupply', 'tokenName', 'tokenSymbol', 'tokenPrecision', 'balanceOf', 'allowance', 'hist'],
               changeMethods: ['init', 'transfer', 'approve', 'transferFrom', 'vote'],
               sender: window.walletAccount.getAccountId()
             });
@@ -20826,10 +20825,45 @@ document.querySelector('.sign-out .btn').addEventListener('click', function () {
 });
 document.querySelector('.vote .btn').addEventListener('click', function () {
   //walletAccount.requestSignIn(nearConfig.contractName, 'NEAR token example');
-  console.log(counter);
-  counter = counter + 4;
-  window.contract.transfer;
+  contract.vote();
 });
+
+function write() {
+  return _write.apply(this, arguments);
+}
+
+function _write() {
+  _write = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+    var ch;
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            _context2.next = 2;
+            return contract.hist();
+
+          case 2:
+            ch = _context2.sent;
+            //console.log(ch);
+            document.getElementById('History').innerHTML = ch;
+            return _context2.abrupt("return", ch);
+
+          case 5:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  }));
+  return _write.apply(this, arguments);
+}
+
+document.querySelector('.history .btn').addEventListener('click', function () {
+  //walletAccount.requestSignIn(nearConfig.contractName, 'NEAR token example');
+  //console.log('test'+write());
+  write();
+}); //document.getElementById('History').innerHTML = write();
+
 window.nearInitPromise = connect().then(updateUI).catch(console.error);
 },{"regenerator-runtime/runtime":"../node_modules/regenerator-runtime/runtime.js","near-api-js":"../node_modules/near-api-js/lib/browser-index.js","./config":"config.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
@@ -20859,7 +20893,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "43769" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "37941" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

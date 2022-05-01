@@ -1,4 +1,4 @@
-const CONTRACT_NAME = process.env.CONTRACT_NAME || 'lightproject.testnet'; /* TODO: fill this in! */
+const CONTRACT_NAME = process.env.CONTRACT_NAME || 'lightcurr.testnet'; /* TODO: fill this in! */
 
 function getConfig (env) {
   switch (env) {

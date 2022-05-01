@@ -2,8 +2,9 @@ import "regenerator-runtime/runtime";
 
 import * as nearAPI from "near-api-js"
 import getConfig from "./config"
+import { async } from "regenerator-runtime/runtime";
 
-let counter=1
+
 
 let nearConfig = getConfig(process.env.NODE_ENV || "development");
 // Connects to NEAR and provides `near`, `walletAccount` and `contract` objects in `window` scope
@@ -16,7 +17,7 @@ async function connect() {
 
   // Initializing our contract APIs by contract name and configuration.
   window.contract = await near.loadContract(nearConfig.contractName, {
-    viewMethods: ['totalSupply','tokenName','tokenSymbol','tokenPrecision', 'balanceOf', 'allowance'],
+    viewMethods: ['totalSupply','tokenName','tokenSymbol','tokenPrecision', 'balanceOf', 'allowance','hist'],
     changeMethods: ['init', 'transfer', 'approve', 'transferFrom','vote'],
     sender: window.walletAccount.getAccountId()
   });
@@ -43,11 +44,20 @@ document.querySelector('.sign-out .btn').addEventListener('click', () => {
 
 document.querySelector('.vote .btn').addEventListener('click', () => {
   //walletAccount.requestSignIn(nearConfig.contractName, 'NEAR token example');
-  console.log(counter);
-  counter=counter+4;
-  window.contract.transfer
+  contract.vote();
 });
 
+async function write(){
+  var ch=await contract.hist();
+  //console.log(ch);
+  document.getElementById('History').innerHTML = ch;
+  return ch;}
+document.querySelector('.history .btn').addEventListener('click', () => {
+  //walletAccount.requestSignIn(nearConfig.contractName, 'NEAR token example');
+  //console.log('test'+write());
+  write();
+});
+//document.getElementById('History').innerHTML = write();
 window.nearInitPromise = connect()
   .then(updateUI)
   .catch(console.error);

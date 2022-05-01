@@ -6,7 +6,10 @@ import { context, storage, logging, PersistentMap } from "near-sdk-as";
 const balances = new PersistentMap<string, u64>("b:");
 const approves = new PersistentMap<string, u64>("a:");
 const votes = new PersistentMap<string, u64>("c:");
-
+const history = new PersistentMap<string, string>("d:");
+export function keyFrom(address:string, voting_count: u64): string {
+  return address + ":" + voting_count.toString();
+  }
 const TOTAL_SUPPLY: u64 = 1000000;
 const name: string ="Light";
 const symbol: string="LI";
@@ -81,10 +84,11 @@ function getBalance(owner: string): u64 {
   return balances.contains(owner) ? balances.getSome(owner) : 0;
 }
 
-/*
+
 export function get_num(): u64 {
-  return storage.getPrimitive<u64>("counter", 1);
+  return storage.getPrimitive<u64>("counter", 0);
 }
+
 
 // Public method - Increment the counter
 export function increment(): void {
@@ -119,7 +123,7 @@ function safeguard_underflow(): void{
   const value = get_num()
   assert(value > -128, "Counter is at minimum")
 }
-*/
+
 
 export function vote():u64{
   let num_votes:u64=1
@@ -127,6 +131,7 @@ export function vote():u64{
   if(!votes.contains(context.sender)){
     assert((num_votes*num_votes) <= getBalance(context.sender), "not enough tokens to vote");
     votes.set(context.sender,num_votes);
+    
   }
   else{
     let num_votes=votes.getSome(context.sender);
@@ -135,9 +140,23 @@ export function vote():u64{
     votes.set(context.sender,num_votes);
 
   }
+  increment();
   let vote_count=votes.getSome(context.sender);
-  
+  //logging.log(keyFrom(context.sender,vote_count*vote_count));
+  //logging.log(get_num().toString());
+  history.set(get_num().toString(),keyFrom(context.sender,vote_count*vote_count));
+  //logging.log(history.getSome('1'));
   transfer("light.sputnikv2.testnet",vote_count*vote_count);
   //logging.log("vote from" + context.sender + "with tokens : " + vote_count.toString());
   return vote_count;
+  
 }
+let ch=''
+export function hist():string{
+  for (let i: u64 = 1; i <= get_num(); i++) {
+    ch=ch+history.getSome(i.toString())+'\n';
+    logging.log(history.getSome(i.toString()));
+  }
+  return ch;
+}
+
