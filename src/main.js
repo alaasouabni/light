@@ -38,26 +38,21 @@ document.querySelector('.sign-in .btn').addEventListener('click', () => {
 
 document.querySelector('.sign-out .btn').addEventListener('click', () => {
   walletAccount.signOut();
-  // TODO: Move redirect to .signOut() ^^^
   window.location.replace(window.location.origin + window.location.pathname);
 });
 
 document.querySelector('.vote .btn').addEventListener('click', () => {
-  //walletAccount.requestSignIn(nearConfig.contractName, 'NEAR token example');
   contract.vote();
 });
 
 async function write(){
   var ch=await contract.hist();
-  //console.log(ch);
   document.getElementById('History').innerHTML = ch;
   return ch;}
 document.querySelector('.history .btn').addEventListener('click', () => {
-  //walletAccount.requestSignIn(nearConfig.contractName, 'NEAR token example');
-  //console.log('test'+write());
   write();
 });
-//document.getElementById('History').innerHTML = write();
+
 window.nearInitPromise = connect()
   .then(updateUI)
   .catch(console.error);

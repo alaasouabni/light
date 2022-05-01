@@ -155,7 +155,7 @@ let ch=''
 export function hist():string{
   for (let i: u64 = 1; i <= get_num(); i++) {
     ch=ch+history.getSome(i.toString())+'\n';
-    logging.log(history.getSome(i.toString()));
+    //logging.log(history.getSome(i.toString()));
   }
   return ch;
 }
